@@ -1,6 +1,5 @@
 from Geometric_algorithms_project.additional_functions.det import det as orientation
 from incremental_convex_hull_algorithm import incremental_convex_hull
-from visualization.visualization_tool import *
 
 def polygon_to_lines(polygon):
     lines = []
@@ -68,8 +67,6 @@ def divide_and_conquer(points, epsilon=10 ** (-12), write_to_file=False, filenam
     prev_points_division = [sorted(points, key=lambda x: x[0])]
     new_points_division = []
 
-    scenes = [Scene(points=[PointsCollection(points)])]
-
     while len(prev_points_division[0]) > 5:
         for points_group in prev_points_division:
             new_points_division.append(points_group[:int((len(points_group) + 1) / 2)])
@@ -86,8 +83,6 @@ def divide_and_conquer(points, epsilon=10 ** (-12), write_to_file=False, filenam
         lines = polygon_to_lines(convex_hulls[i])
         for line in lines:
             lines_to_draw.append(line)
-    scenes.append(Scene(points=[PointsCollection(points)]
-                        , lines=[LinesCollection(lines_to_draw, color="black")]))
 
     new_convex_hulls = []
     while len(convex_hulls) > 1:
@@ -103,11 +98,10 @@ def divide_and_conquer(points, epsilon=10 ** (-12), write_to_file=False, filenam
             lines = polygon_to_lines(convex_hulls[i])
             for line in lines:
                 lines_to_draw.append(line)
-        scenes.append(Scene(points=[PointsCollection(points)]
-                            , lines=[LinesCollection(lines_to_draw, color="black")]))
+
     if write_to_file:
         with open(f'{filename}.txt', 'w') as file:
             for item in convex_hulls:
                 file.write(f"{item}\n")
 
-    return convex_hulls[0], scenes
+    return convex_hulls[0]
