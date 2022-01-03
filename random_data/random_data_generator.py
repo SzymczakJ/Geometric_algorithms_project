@@ -19,7 +19,7 @@ def random_points_on_the_circle(num_of_points, center, R):
     return random_points
 
 
-def random_point_on_the_rectangle(num_of_points, vertices):
+def random_points_on_the_rectangle(num_of_points, vertices):
     min_y = min_x = inf
     max_y = max_x = inf
     for v in vertices:
@@ -65,7 +65,7 @@ def random_point_on_the_rectangle(num_of_points, vertices):
     return random_points
 
 
-def random_points_on_square(vertices, side_num_of_points, diag_num_of_points):
+def random_points_on_square(side_num_of_points, diag_num_of_points, vertices):
     min_y = min_x = inf
     max_y = max_x = inf
     for v in vertices:

@@ -1,4 +1,12 @@
-def det(a, b, c, epsilon=10 ** (-12)):
+def create_lines(points):
+    lines = []
+    for p in range(len(points) - 1):
+        lines.append((points[p], points[p + 1]))
+    lines.append((points[-1], points[0]))
+    return lines
+
+
+def orientation(a, b, c, epsilon=10 ** (-12)):
     a_x, a_y = a
     b_x, b_y = b
     c_x, c_y = c
