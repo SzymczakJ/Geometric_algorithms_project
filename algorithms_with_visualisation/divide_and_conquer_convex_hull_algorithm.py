@@ -1,16 +1,9 @@
-from Geometric_algorithms_project.additional_functions.det import det as orientation
-from incremental_convex_hull_algorithm import incremental_convex_hull
+from algorithms_without_visualisation.incremental_convex_hull_algorithm import incremental_convex_hull
 from visualization.visualization_tool import *
+from additional_functions.additional_functions import *
 
-def polygon_to_lines(polygon):
-    lines = []
-    n = len(polygon)
-    lines.append((polygon[n - 1], polygon[0]))
-    for i in range(n - 1):
-        lines.append((polygon[i], polygon[i + 1]))
-    return lines
 
-def merge_hulls(left_convex_hull, right_convex_hull):
+def merge_hulls(left_convex_hull, right_convex_hull, epsilon):
     right_n = len(right_convex_hull)
     left_n = len(left_convex_hull)
     rightmost_point = 0
@@ -25,28 +18,28 @@ def merge_hulls(left_convex_hull, right_convex_hull):
     right_convex_point = leftmost_point
 
     while orientation(left_convex_hull[left_convex_point], right_convex_hull[right_convex_point],
-                      right_convex_hull[(right_convex_point + 1) % right_n]) != -1 or orientation(
-            right_convex_hull[right_convex_point], left_convex_hull[left_convex_point],
-            left_convex_hull[(left_convex_point - 1) % left_n]) != 1:
+                      right_convex_hull[(right_convex_point + 1) % right_n], epsilon) != -1 or \
+            orientation(right_convex_hull[right_convex_point], left_convex_hull[left_convex_point],
+                        left_convex_hull[(left_convex_point - 1) % left_n]) != 1:
         while orientation(left_convex_hull[left_convex_point], right_convex_hull[right_convex_point],
-                          right_convex_hull[(right_convex_point + 1) % right_n]) != -1:
+                          right_convex_hull[(right_convex_point + 1) % right_n], epsilon) != -1:
             right_convex_point = (right_convex_point + 1) % right_n
         while orientation(right_convex_hull[right_convex_point], left_convex_hull[left_convex_point],
-                          left_convex_hull[(left_convex_point - 1) % left_n]) != 1:
+                          left_convex_hull[(left_convex_point - 1) % left_n], epsilon) != 1:
             left_convex_point = (left_convex_point - 1) % left_n
     points_of_tangent = [left_convex_point, right_convex_point]
 
     left_convex_point = rightmost_point
     right_convex_point = leftmost_point
     while orientation(left_convex_hull[left_convex_point], right_convex_hull[right_convex_point],
-                      right_convex_hull[(right_convex_point - 1) % right_n]) != 1 or orientation(
-            right_convex_hull[right_convex_point], left_convex_hull[left_convex_point],
-            left_convex_hull[(left_convex_point + 1) % left_n]) != -1:
+                      right_convex_hull[(right_convex_point - 1) % right_n], epsilon) != 1 or \
+            orientation(right_convex_hull[right_convex_point], left_convex_hull[left_convex_point],
+                        left_convex_hull[(left_convex_point + 1) % left_n], epsilon) != -1:
         while orientation(left_convex_hull[left_convex_point], right_convex_hull[right_convex_point],
                           right_convex_hull[(right_convex_point - 1) % right_n]) != 1:
             right_convex_point = (right_convex_point - 1) % right_n
         while orientation(right_convex_hull[right_convex_point], left_convex_hull[left_convex_point],
-                          left_convex_hull[(left_convex_point + 1) % left_n]) != -1:
+                          left_convex_hull[(left_convex_point + 1) % left_n], epsilon) != -1:
             left_convex_point = (left_convex_point + 1) % left_n
     points_of_tangent.append(left_convex_point)
     points_of_tangent.append(right_convex_point)
@@ -65,6 +58,8 @@ def merge_hulls(left_convex_hull, right_convex_hull):
 
 
 def divide_and_conquer(points, epsilon=10 ** (-12), write_to_file=False, filename="divide_and_conquer"):
+    if len(points) < 3:
+        return None, None
     prev_points_division = [sorted(points, key=lambda x: x[0])]
     new_points_division = []
 
@@ -83,31 +78,28 @@ def divide_and_conquer(points, epsilon=10 ** (-12), write_to_file=False, filenam
 
     lines_to_draw = []
     for i in range(len(convex_hulls)):
-        lines = polygon_to_lines(convex_hulls[i])
+        lines = create_lines(convex_hulls[i])
         for line in lines:
             lines_to_draw.append(line)
-    scenes.append(Scene(points=[PointsCollection(points)]
-                        , lines=[LinesCollection(lines_to_draw, color="black")]))
+    scenes.append(Scene(points=[PointsCollection(points)], lines=[LinesCollection(lines_to_draw, color="black")]))
 
     new_convex_hulls = []
     while len(convex_hulls) > 1:
         i = 0
         while i + 1 < len(convex_hulls):
-            new_convex_hulls.append(merge_hulls(convex_hulls[i], convex_hulls[i + 1]))
+            new_convex_hulls.append(merge_hulls(convex_hulls[i], convex_hulls[i + 1], epsilon))
             i += 2
         convex_hulls = new_convex_hulls
         new_convex_hulls = []
 
         lines_to_draw = []
         for i in range(len(convex_hulls)):
-            lines = polygon_to_lines(convex_hulls[i])
+            lines = create_lines(convex_hulls[i])
             for line in lines:
                 lines_to_draw.append(line)
-        scenes.append(Scene(points=[PointsCollection(points)]
-                            , lines=[LinesCollection(lines_to_draw, color="black")]))
+        scenes.append(Scene(points=[PointsCollection(points)], lines=[LinesCollection(lines_to_draw, color="black")]))
     if write_to_file:
         with open(f'{filename}.txt', 'w') as file:
             for item in convex_hulls:
                 file.write(f"{item}\n")
-
     return convex_hulls[0], scenes

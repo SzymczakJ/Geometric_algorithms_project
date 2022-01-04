@@ -5,6 +5,8 @@ from copy import deepcopy
 
 
 def graham_convex_hull(points, epsilon=10 ** (-12), write_to_file=False, filename="graham_result"):
+    if len(points) < 3:
+        return None, None
     lowest_point = points[0]
     for i in range(len(points)):
         if abs(lowest_point[1] - points[i][1]) < epsilon:
