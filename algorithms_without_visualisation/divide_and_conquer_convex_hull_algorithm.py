@@ -11,7 +11,7 @@ def merge_hulls(left_convex_hull, right_convex_hull, epsilon):
             rightmost_point = i
     leftmost_point = 0
     for i in range(right_n):
-        if left_convex_hull[i][0] > right_convex_hull[leftmost_point][0]:
+        if right_convex_hull[i][0] < right_convex_hull[leftmost_point][0]:
             leftmost_point = i
     left_convex_point = rightmost_point
     right_convex_point = leftmost_point
