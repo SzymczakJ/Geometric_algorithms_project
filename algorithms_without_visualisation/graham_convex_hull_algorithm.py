@@ -1,12 +1,12 @@
-from functools import cmp_to_key
 from additional_functions.additional_functions import *
+from collections import deque
+from functools import cmp_to_key
 
 
 def graham_convex_hull(points, epsilon=10 ** (-12)):
-    if len(points) < 3:
-        return None
+    length = len(points)
     lowest_point = points[0]
-    for i in range(len(points)):
+    for i in range(length):
         if abs(lowest_point[1] - points[i][1]) < epsilon:
             if lowest_point[0] > points[i][0]:
                 lowest_point = points[i]
@@ -18,7 +18,7 @@ def graham_convex_hull(points, epsilon=10 ** (-12)):
             return -1
         elif point_b[0] == lowest_point[0] and point_b[1] == lowest_point[1]:
             return 1
-        orient = orientation(lowest_point, point_a, point_b, epsilon)
+        orient = det(lowest_point, point_a, point_b)
         if orient < -epsilon:
             return 1
         elif epsilon > orient > -epsilon:
@@ -37,11 +37,13 @@ def graham_convex_hull(points, epsilon=10 ** (-12)):
 
     graham_cmp_key = cmp_to_key(graham_cmp)
     sorted_set = sorted(points, key=graham_cmp_key)
-    convex_hull = [sorted_set[0], sorted_set[1]]
+    convex_hull = deque()
+    convex_hull.append(sorted_set[0])
+    convex_hull.append(sorted_set[1])
     i = 2
-    while i < len(points):
+    while i < length:
         if (convex_hull[0][0] == convex_hull[-1][0] and convex_hull[0][1] == convex_hull[-1][1]) or \
-                orientation(convex_hull[-2], convex_hull[-1], sorted_set[i], epsilon) > epsilon:
+                det(convex_hull[-2], convex_hull[-1], sorted_set[i]) > epsilon:
             convex_hull.append(sorted_set[i])
             i += 1
         else:

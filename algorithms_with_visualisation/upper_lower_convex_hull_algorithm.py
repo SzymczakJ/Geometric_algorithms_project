@@ -58,7 +58,9 @@ def upper_lower_convex_hull(points, epsilon=10 ** (-12), write_to_file=False, fi
         lower_hull.append(value)
         lower_hull_lines.append((lower_hull[-2], lower_hull[-1]))
 
-    scenes.append(Scene(points=[PointsCollection(deepcopy(points), color="black")],
+    scenes.append(Scene(points=[PointsCollection(deepcopy(points), color="black"),
+                                PointsCollection(deepcopy(upper_hull), color="blue"),
+                                PointsCollection(deepcopy(lower_hull), color="green")],
                         lines=[LinesCollection(deepcopy(upper_hull_lines), color="blue"),
                                LinesCollection(deepcopy(lower_hull_lines), color="green")]))
     lower_hull.reverse()

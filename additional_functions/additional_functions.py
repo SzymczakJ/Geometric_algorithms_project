@@ -24,3 +24,12 @@ def orientation(a, b, c, epsilon=10 ** (-12)):
         return 1
     else:
         return 0
+
+
+def det(a, b, c):
+    a_x, a_y = a
+    b_x, b_y = b
+    c_x, c_y = c
+    first = (a_x - c_x) * (b_y - c_y)
+    second = (a_y - c_y) * (b_x - c_x)
+    return first - second
