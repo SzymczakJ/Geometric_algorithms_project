@@ -46,7 +46,11 @@ def graham_convex_hull(points, epsilon=10 ** (-12), write_to_file=False, filenam
     convex_hull.append(sorted_set[1])
     convex_hull_lines = deque()
     convex_hull_lines.append([sorted_set[0], sorted_set[1]])
+
+    # creating scenes for visualization
     scenes = [Scene(points=[PointsCollection(deepcopy(points), color="black")])]
+
+    # adding scenes for visualization
     scenes.append(Scene(points=[PointsCollection(deepcopy(points), color='black'),
                                 PointsCollection(deepcopy(convex_hull), color='blue')],
                         lines=[LinesCollection(deepcopy(convex_hull_lines), color="blue"),
@@ -61,6 +65,8 @@ def graham_convex_hull(points, epsilon=10 ** (-12), write_to_file=False, filenam
         else:
             convex_hull.pop()
             convex_hull_lines.pop()
+
+        # adding scenes for visualization
         if len(convex_hull) > 1:
             scenes.append(Scene(points=[PointsCollection(deepcopy(points), color='black'),
                                         PointsCollection(deepcopy(convex_hull), color='blue')],
@@ -71,10 +77,12 @@ def graham_convex_hull(points, epsilon=10 ** (-12), write_to_file=False, filenam
                                         PointsCollection(deepcopy(convex_hull), color='blue')],
                                 lines=[LinesCollection(deepcopy(convex_hull_lines), color='blue')]))
 
+    # adding scenes for visualization
     convex_hull_lines.append([convex_hull[0], convex_hull[-1]])
     scenes.append(Scene(points=[PointsCollection(deepcopy(points), color='black'),
                                 PointsCollection(deepcopy(convex_hull), color="blue")],
                         lines=[LinesCollection(deepcopy(convex_hull_lines), color="blue")]))
+
     if write_to_file:
         with open(f'{filename}.txt', 'w') as file:
             for item in convex_hull:

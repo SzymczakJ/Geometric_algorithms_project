@@ -1,6 +1,7 @@
 from algorithms_without_visualisation.incremental_convex_hull_algorithm import incremental_convex_hull
 from visualization.visualization_tool import *
 from additional_functions.additional_functions import *
+from copy import deepcopy
 
 
 def merge_hulls(left_convex_hull, right_convex_hull, epsilon):
@@ -63,7 +64,8 @@ def divide_and_conquer(points, epsilon=10 ** (-12), write_to_file=False, filenam
     prev_points_division = [sorted(points, key=lambda x: x[0])]
     new_points_division = []
 
-    scenes = [Scene(points=[PointsCollection(points)])]
+    # creating scenes for visualization
+    scenes = [Scene(points=[PointsCollection(deepcopy(points), color="black")])]
 
     while len(prev_points_division[0]) > 5:
         for points_group in prev_points_division:
@@ -81,7 +83,10 @@ def divide_and_conquer(points, epsilon=10 ** (-12), write_to_file=False, filenam
         lines = create_lines(convex_hulls[i])
         for line in lines:
             lines_to_draw.append(line)
-    scenes.append(Scene(points=[PointsCollection(points)], lines=[LinesCollection(lines_to_draw, color="black")]))
+
+    # adding scenes for visualization
+    scenes.append(Scene(points=[PointsCollection(deepcopy(points), color="black")],
+                        lines=[LinesCollection(deepcopy(lines_to_draw), color="blue")]))
 
     new_convex_hulls = []
     while len(convex_hulls) > 1:
@@ -92,12 +97,15 @@ def divide_and_conquer(points, epsilon=10 ** (-12), write_to_file=False, filenam
         convex_hulls = new_convex_hulls
         new_convex_hulls = []
 
+        # adding scenes for visualization
         lines_to_draw = []
         for i in range(len(convex_hulls)):
             lines = create_lines(convex_hulls[i])
             for line in lines:
                 lines_to_draw.append(line)
-        scenes.append(Scene(points=[PointsCollection(points)], lines=[LinesCollection(lines_to_draw, color="black")]))
+        scenes.append(Scene(points=[PointsCollection(deepcopy(points), color="black")],
+                            lines=[LinesCollection(deepcopy(lines_to_draw), color="blue")]))
+
     if write_to_file:
         with open(f'{filename}.txt', 'w') as file:
             for item in convex_hulls:

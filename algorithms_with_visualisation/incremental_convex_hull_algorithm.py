@@ -1,5 +1,6 @@
 from visualization.visualization_tool import *
 from additional_functions.additional_functions import *
+from copy import deepcopy
 
 
 def is_in_polygon(polygon, point, epsilon):
@@ -12,6 +13,7 @@ def is_in_polygon(polygon, point, epsilon):
 
 def compute_tangent(polygon, point, epsilon):
     n = len(polygon)
+
     # index 0 - left tangent,
     # index 1 - right tangent,
     tangents = [0, 0]
@@ -49,10 +51,13 @@ def incremental_convex_hull(points, epsilon=10 ** (-12), write_to_file=False, fi
     n = len(points)
     convex_hull = [points[0], points[1], points[2]]
 
-    scenes = [Scene(points=[PointsCollection(points, color="black")])]
+    # creating scenes for visualization
+    scenes = [Scene(points=[PointsCollection(deepcopy(points), color="black")])]
+
+    # adding scenes for visualization
     lines_to_draw = create_lines(convex_hull)
-    scenes.append(Scene(points=[PointsCollection(points, color="black")],
-                        lines=[LinesCollection(lines_to_draw, color="blue")]))
+    scenes.append(Scene(points=[PointsCollection(deepcopy(points), color="black")],
+                        lines=[LinesCollection(deepcopy(lines_to_draw), color="blue")]))
 
     if orientation(convex_hull[0], convex_hull[1], convex_hull[2], epsilon) == 1:
         convex_hull[1], convex_hull[2] = convex_hull[2], convex_hull[1]
@@ -64,18 +69,23 @@ def incremental_convex_hull(points, epsilon=10 ** (-12), write_to_file=False, fi
         return convex_hull, scenes
 
     for i in range(3, n):
+        # adding scenes for visualization
         lines_to_draw = create_lines(convex_hull)
-        scenes.append(Scene(points=[PointsCollection(points, color="black"),
+        scenes.append(Scene(points=[PointsCollection(deepcopy(points), color="black"),
                                     PointsCollection([points[i]], color="red")],
-                            lines=[LinesCollection(lines_to_draw, color="blue")]))
+                            lines=[LinesCollection(deepcopy(lines_to_draw), color="blue")]))
+
         if not is_in_polygon(convex_hull, points[i], epsilon):
             left_tangent_index, right_tangent_index = compute_tangent(convex_hull, points[i], epsilon)
+
+            # adding scenes for visualization
             lines_to_draw = create_lines(convex_hull)
-            scenes.append(Scene(points=[PointsCollection(points, color="black"),
+            scenes.append(Scene(points=[PointsCollection(deepcopy(points), color="black"),
                                         PointsCollection([points[i]], color="red")],
-                                lines=[LinesCollection(lines_to_draw, color="blue"),
+                                lines=[LinesCollection(deepcopy(lines_to_draw), color="blue"),
                                        LinesCollection([(convex_hull[left_tangent_index], points[i]),
                                                         (convex_hull[right_tangent_index], points[i])], color="red")]))
+
             if (left_tangent_index + 1) % len(convex_hull) != right_tangent_index:
                 right_tangent = convex_hull[right_tangent_index]
                 j = (left_tangent_index + 1) % len(convex_hull)
@@ -86,9 +96,12 @@ def incremental_convex_hull(points, epsilon=10 ** (-12), write_to_file=False, fi
                 convex_hull.insert(j, points[i])
             else:
                 convex_hull.insert(right_tangent_index, points[i])
+
+        # adding scenes for visualization
         lines_to_draw = create_lines(convex_hull)
-        scenes.append(Scene(points=[PointsCollection(points, color="black")],
-                            lines=[LinesCollection(lines_to_draw, color="blue")]))
+        scenes.append(Scene(points=[PointsCollection(deepcopy(points), color="black")],
+                            lines=[LinesCollection(deepcopy(lines_to_draw), color="blue")]))
+
     if write_to_file:
         with open(f'{filename}.txt', 'w') as file:
             for item in convex_hull:

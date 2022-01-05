@@ -24,5 +24,5 @@ def upper_lower_convex_hull(points, epsilon=10 ** (-12)):
     lower_hull.reverse()
     upper_hull.pop()
     lower_hull.pop()
-    upper_hull.extend(lower_hull)
-    return upper_hull
+    convex_hull = upper_hull + lower_hull
+    return convex_hull

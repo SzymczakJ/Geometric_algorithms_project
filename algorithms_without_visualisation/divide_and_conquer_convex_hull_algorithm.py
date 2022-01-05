@@ -19,7 +19,7 @@ def merge_hulls(left_convex_hull, right_convex_hull, epsilon):
     while orientation(left_convex_hull[left_convex_point], right_convex_hull[right_convex_point],
                       right_convex_hull[(right_convex_point + 1) % right_n], epsilon) != -1 or \
             orientation(right_convex_hull[right_convex_point], left_convex_hull[left_convex_point],
-                        left_convex_hull[(left_convex_point - 1) % left_n], epsilon) != 1:
+                        left_convex_hull[(left_convex_point - 1) % left_n]) != 1:
         while orientation(left_convex_hull[left_convex_point], right_convex_hull[right_convex_point],
                           right_convex_hull[(right_convex_point + 1) % right_n], epsilon) != -1:
             right_convex_point = (right_convex_point + 1) % right_n
@@ -35,7 +35,7 @@ def merge_hulls(left_convex_hull, right_convex_hull, epsilon):
             orientation(right_convex_hull[right_convex_point], left_convex_hull[left_convex_point],
                         left_convex_hull[(left_convex_point + 1) % left_n], epsilon) != -1:
         while orientation(left_convex_hull[left_convex_point], right_convex_hull[right_convex_point],
-                          right_convex_hull[(right_convex_point - 1) % right_n], epsilon) != 1:
+                          right_convex_hull[(right_convex_point - 1) % right_n]) != 1:
             right_convex_point = (right_convex_point - 1) % right_n
         while orientation(right_convex_hull[right_convex_point], left_convex_hull[left_convex_point],
                           left_convex_hull[(left_convex_point + 1) % left_n], epsilon) != -1:
@@ -58,11 +58,11 @@ def merge_hulls(left_convex_hull, right_convex_hull, epsilon):
 
 def divide_and_conquer(points, epsilon=10 ** (-12)):
     if len(points) < 3:
-        return None
+        return None, None
     prev_points_division = [sorted(points, key=lambda x: x[0])]
     new_points_division = []
 
-    while len(prev_points_division[0]) > 5:
+    while len(prev_points_division[0]) > 6:
         for points_group in prev_points_division:
             new_points_division.append(points_group[:int((len(points_group) + 1) / 2)])
             new_points_division.append(points_group[int((len(points_group) + 1) / 2):])

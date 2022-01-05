@@ -11,6 +11,7 @@ def is_in_polygon(polygon, point, epsilon):
 
 def compute_tangent(polygon, point, epsilon):
     n = len(polygon)
+
     # index 0 - left tangent,
     # index 1 - right tangent,
     tangents = [0, 0]

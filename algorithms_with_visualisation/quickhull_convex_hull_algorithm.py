@@ -27,18 +27,11 @@ def remove_points_inside(points, p_1, p_2, p_3, epsilon):
     points += new_points
 
 
-def create_hull_lines(hull):
-    lines = []
-    for i in range(len(hull) - 1):
-        lines.append([hull[i], hull[i + 1]])
-    lines.append([hull[len(hull) - 1], hull[0]])
-    return lines
-
-
 def recursive_quickhull(points, convex_hull, p_1, p_2, scenes, epsilon):
     if len(points) == 0:
         return []
 
+    # adding scenes for visualization
     scenes.append(Scene(points=[PointsCollection(deepcopy(points), color="black"),
                                 PointsCollection(deepcopy(convex_hull), color="blue")],
                         lines=[LinesCollection(deepcopy([[p_1, p_2]]), color="red")]))
@@ -49,6 +42,7 @@ def recursive_quickhull(points, convex_hull, p_1, p_2, scenes, epsilon):
     points.remove(p_3)
     convex_hull.append(p_3)
 
+    # adding scenes for visualization
     scenes.append(Scene(points=[PointsCollection(deepcopy(points), color="black"),
                                 PointsCollection(deepcopy(convex_hull), color="blue"),
                                 PointsCollection([p_3], color="red")],
@@ -56,10 +50,12 @@ def recursive_quickhull(points, convex_hull, p_1, p_2, scenes, epsilon):
 
     remove_points_inside(points, p_1, p_2, p_3, epsilon)
 
+    # adding scenes for visualization
     scenes.append(Scene(points=[PointsCollection(deepcopy(points), color="black"),
                                 PointsCollection(deepcopy(convex_hull), color="blue")],
                         lines=[LinesCollection([[p_1, p_2], [p_1, p_3], [p_2, p_3]], color="red")]))
 
+    # adding scenes for visualization
     scenes.append(Scene(points=[PointsCollection(deepcopy(points), color="black"),
                                 PointsCollection(deepcopy(convex_hull), color="blue")],
                         lines=[LinesCollection([[p_2, p_3]], color="red")]))
@@ -75,20 +71,23 @@ def quickhull_convex_hull(points, epsilon=10 ** (-12), write_to_file=False, file
     p_1 = sorted_points[0]
     p_2 = sorted_points[-1]
 
+    # creating scenes for visualization
     scenes = [Scene(points=[PointsCollection(deepcopy(sorted_points), color="black")])]
 
     sorted_points.remove(p_1)
     sorted_points.remove(p_2)
-    convex_hull = [p_1, p_2]
-    hull = [p_1] + recursive_quickhull(sorted_points, convex_hull, p_1, p_2, scenes, epsilon) + \
-           [p_2] + recursive_quickhull(sorted_points, convex_hull, p_2, p_1, scenes, epsilon)
+    curr_hull = [p_1, p_2]
+    convex_hull = [p_1] + recursive_quickhull(sorted_points, curr_hull, p_1, p_2, scenes, epsilon) + \
+                  [p_2] + recursive_quickhull(sorted_points, curr_hull, p_2, p_1, scenes, epsilon)
 
-    hull_lines = create_hull_lines(hull)
+    # adding scenes for visualization
+    hull_lines = create_lines(convex_hull)
     scenes.append(Scene(points=[PointsCollection(deepcopy(points), color="black"),
-                                PointsCollection(deepcopy(convex_hull), color="blue")],
+                                PointsCollection(deepcopy(curr_hull), color="blue")],
                         lines=[LinesCollection(deepcopy(hull_lines), color="blue")]))
+
     if write_to_file:
         with open(f'{filename}.txt', 'w') as file:
-            for item in convex_hull:
+            for item in curr_hull:
                 file.write(f"{item}\n")
-    return hull, scenes
+    return convex_hull, scenes

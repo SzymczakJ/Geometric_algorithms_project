@@ -50,7 +50,7 @@ def quickhull_convex_hull(points, epsilon=10 ** (-12)):
 
     sorted_points.remove(p_1)
     sorted_points.remove(p_2)
-    convex_hull = [p_1, p_2]
-    hull = [p_1] + recursive_quickhull(sorted_points, convex_hull, p_1, p_2, epsilon) + \
-           [p_2] + recursive_quickhull(sorted_points, convex_hull, p_2, p_1, epsilon)
-    return hull
+    curr_hull = [p_1, p_2]
+    convex_hull = [p_1] + recursive_quickhull(sorted_points, curr_hull, p_1, p_2, epsilon) + \
+                  [p_2] + recursive_quickhull(sorted_points, curr_hull, p_2, p_1, epsilon)
+    return convex_hull
