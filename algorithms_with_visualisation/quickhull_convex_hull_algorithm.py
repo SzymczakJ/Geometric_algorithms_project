@@ -3,15 +3,6 @@ from additional_functions.additional_functions import *
 from copy import deepcopy
 
 
-def det(a, b, c):
-    a_x, a_y = a
-    b_x, b_y = b
-    c_x, c_y = c
-    first = (a_x - c_x) * (b_y - c_y)
-    second = (a_y - c_y) * (b_x - c_x)
-    return first - second
-
-
 def calculate_distance(points, p_1, p_2):
     result = None
     for i in range(len(points)):
